@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "types",
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -17,6 +19,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "antdv-helper": [
+        "packages/index.ts"
       ]
     },
     "lib": [
@@ -27,6 +32,7 @@
     ]
   },
   "include": [
+    "packages/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
