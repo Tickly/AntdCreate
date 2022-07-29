@@ -14,7 +14,7 @@ export default class Column {
     this.config = config;
   }
 
-  customRender(text: any, record: any, index: number): VNode | number | string {
+  public customRender(text: any, record: any, index: number): VNode | number | string {
     return text;
   }
 

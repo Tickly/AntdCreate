@@ -3,17 +3,9 @@
     <span slot="serial" slot-scope="text, row, i">{{ i + 1 }}</span>
     <a slot="name" slot-scope="text">{{ text }}</a>
     <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
-    <span slot="tags" slot-scope="tags">
-      <a-tag
-        v-for="tag in tags"
-        :key="tag"
-        :color="
-          tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'
-        "
-      >
-        {{ tag.toUpperCase() }}
-      </a-tag>
-    </span>
+    <div slot="tags" slot-scope="status">
+      <online-status-tag :status="status" />
+    </div>
     <span slot="action" slot-scope="text, record">
       <a>Invite 一 {{ record.name }}</a>
       <a-divider type="vertical" />
@@ -24,71 +16,110 @@
   </a-table>
 </template>
 <script lang="ts">
-import Vue from 'vue';
-const columns = [
-  {
-    title: '#',
-    scopedSlots: { customRender: 'serial' },
-  },
-  {
-    key: 'name',
-    dataIndex: 'name',
-    title: '姓名',
-    scopedSlots: { customRender: 'name' },
-  },
-  {
-    key: 'age',
-    title: '年龄',
-    dataIndex: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tags' },
-  },
-  {
-    title: 'createdAt',
-    dataIndex: 'createdAt',
-  },
-];
+import moment from 'moment';
+import numeral from 'numeral';
+import Vue, { VNode } from 'vue';
 
-const data = [
-  {
-    key: '1',
-    name: '张三',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-    createdAt: 1659080644370,
+const OnlineStatusTag = Vue.extend({
+  props: {
+    status: {
+      type: String,
+    },
   },
-  {
-    key: '2',
-    name: '李四',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-    createdAt: 1659080644370,
+  computed: {
+    tagColor(): string {
+      const cm = {
+        online: 'blue',
+        offline: 'red',
+        busy: 'purple',
+      } as Record<string, string>;
+
+      return cm[this.status];
+    },
   },
-  {
-    key: '3',
-    name: '王二麻子',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-    createdAt: 1659080644370,
+  render(h): VNode {
+    return h(
+      'a-tag',
+      {
+        props: {
+          color: this.tagColor,
+        },
+      },
+      this.status
+    );
   },
-];
+});
+
 export default Vue.extend({
+  components: {
+    OnlineStatusTag,
+  },
   data() {
     return {
-      data,
-      columns,
+      data: [
+        {
+          key: '1',
+          name: '张三',
+          age: 32,
+          address: 'New York No. 1 Lake Park',
+          tags: ['nice', 'developer'],
+          createdAt: 1659080644370,
+          onlineStatus: 'online',
+          followers: 3,
+        },
+        {
+          key: '2',
+          name: '李四',
+          age: 42,
+          address: 'London No. 1 Lake Park',
+          tags: ['loser'],
+          createdAt: 1659080644370,
+          onlineStatus: 'busy',
+          followers: 3456,
+        },
+        {
+          key: '3',
+          name: '王二麻子',
+          age: 32,
+          address: 'Sidney No. 1 Lake Park',
+          tags: ['cool', 'teacher'],
+          createdAt: 1659080644370,
+          onlineStatus: 'offline',
+          followers: 1000333,
+        },
+      ],
+      columns: [
+        {
+          title: '#',
+          scopedSlots: { customRender: 'serial' },
+        },
+        {
+          key: 'name',
+          dataIndex: 'name',
+          title: '姓名',
+          scopedSlots: { customRender: 'name' },
+        },
+        {
+          title: '在线状态',
+          dataIndex: 'onlineStatus',
+          scopedSlots: { customRender: 'tags' },
+        },
+        {
+          title: '粉丝',
+          dataIndex: 'followers',
+          customRender: (t: number) => numeral(t).format('0,0'),
+        },
+        {
+          title: '注册时间',
+          dataIndex: 'createdAt',
+          customRender: (t: number) => moment(t).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          title: '家庭住址',
+          dataIndex: 'address',
+          key: 'address',
+        },
+      ],
     };
   },
 });

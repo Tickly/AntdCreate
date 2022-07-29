@@ -3,6 +3,7 @@ import Column, { AntdvColumnConfig } from './Columns/Column';
 import SerialColumn from './Columns/SerialColumn';
 import DateColumn from './Columns/DateColumn';
 import LinkColumn from './Columns/LinkColumn';
+import NumberColumn from './Columns/NumberColumn';
 
 export type Slot = () => VNode;
 
@@ -39,6 +40,9 @@ export function UseColumns(
       }
       if (col.type === 'link') {
         return new LinkColumn(col).toAntdColumn();
+      }
+      if (col.type === 'number') {
+        return new NumberColumn(col).toAntdColumn();
       }
     }
 
